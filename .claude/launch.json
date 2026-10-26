@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "studio", "runtimeExecutable": "python3", "runtimeArgs": ["engine/studio/server.py", "serve"], "port": 48150 }
+  ]
+}

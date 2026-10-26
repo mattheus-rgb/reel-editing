@@ -43,6 +43,7 @@ Keep this folder out of iCloud Drive; `~/projects/` is right.
 | Say | Skill |
 |---|---|
 | set me up | `set-me-up` |
+| open my studio, show my clients, studio notes | `studio` |
 | switch to <brand>, which brand, new brand <name> | `engine/brand.py` |
 | build the homebase for <brand> | `homebase` |
 | edit this reel, cut this down, rough cut | `rough-cut` |
@@ -74,9 +75,15 @@ Keep this folder out of iCloud Drive; `~/projects/` is right.
 Mac (Apple Silicon), ffmpeg, uv, Node, CapCut desktop for the CapCut route. Python 3.11 is
 managed by uv. Pins: WhisperX 3.8.6 / torch 2.8.0 for speech, HyperFrames 0.8.181 for graphics.
 
+## The Studio
+
+Say "open my studio": a local page (127.0.0.1 only) listing every client, which one is active, each
+client's setup state, and every reel with its stage from footage to final. Switch brands, add a
+client, open folders, leave a note Claude reads with "studio notes".
+
 ## Status
 
-v0 scaffold. Real today: the rules, skills, brand-kit template, hooks, safe zones, the Neutral pack
+v0.1. Real today: the rules, skills, brand-kit template, hooks, safe zones, the Neutral pack
 loader and learned preferences. Every other script in `engine/` is a stub carrying its contract in its
 docstring. Build order: cut → measure → type and render → plan, beat sheet, sound → homebase and packs
 → CapCut. See `docs/GENERIC-ENGINE-PLAN.md`.

@@ -18,6 +18,7 @@ else
   if [ "$n" -eq 0 ]; then notes+=("No client brands yet: 'new brand <name>' makes one from brands/_template.");
   else notes+=("No active brand ($n exist). Ask which brand before the first cut, or 'switch to <brand>'."); fi
 fi
+notes+=("The Studio page shows every client and reel: they can say 'open my studio'.")
 [ ${#notes[@]} -eq 0 ] && exit 0
 printf '%s\n' "${notes[@]}" | python3 -c '
 import json,sys

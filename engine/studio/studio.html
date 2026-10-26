@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio</title>
+<style>
+  :root { color-scheme: light dark;
+    --bg:#f6f5f2; --panel:#ffffff; --ink:#1b1b1b; --muted:#6b6b6b; --line:#e4e2dd; --accent:#1b1b1b; --accent-ink:#fff; --ok:#2e8b57; --warn:#c77d00; --soft:#f0eee9; }
+  @media (prefers-color-scheme: dark) { :root {
+    --bg:#151515; --panel:#1f1f1f; --ink:#f2f1ee; --muted:#9a9a9a; --line:#2e2e2e; --accent:#f2f1ee; --accent-ink:#151515; --ok:#5fcf8a; --warn:#f0a93a; --soft:#262626; } }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system, "Inter", system-ui, sans-serif; }
+  header { display:flex; align-items:baseline; gap:16px; padding:22px 28px 10px; }
+  header h1 { font-size:22px; margin:0; letter-spacing:-.01em }
+  header .sub { color:var(--muted) }
+  header .spacer { flex:1 }
+  main { display:grid; grid-template-columns: 300px 1fr; gap:20px; padding:10px 28px 40px; min-height: calc(100vh - 70px); }
+  @media (max-width: 820px) { main { grid-template-columns: 1fr } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px; }
+  .brands { padding:10px; display:flex; flex-direction:column; gap:6px; }
+  .brand { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; cursor:pointer; border:1px solid transparent; }
+  .brand:hover { background:var(--soft) }
+  .brand.selected { border-color:var(--line); background:var(--soft) }
+  .brand .dot { width:10px; height:10px; border-radius:50%; background:var(--line); flex:none }
+  .brand.active .dot { background:var(--ok) }
+  .brand .name { font-weight:600; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+  .brand .n { color:var(--muted); font-size:13px }
+  .brand.agency .name { color:var(--muted); font-weight:500 }
+  .newbrand { display:flex; gap:6px; padding:10px 12px; border-top:1px solid var(--line); margin-top:6px }
+  input { font:inherit; padding:8px 10px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); min-width:0; flex:1 }
+  button { font:inherit; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--panel); color:var(--ink); cursor:pointer }
+  button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent) }
+  button:disabled { opacity:.5; cursor:default }
+  .detail { padding:22px 24px; display:flex; flex-direction:column; gap:18px }
+  .detail h2 { margin:0; font-size:26px; letter-spacing:-.01em }
+  .detail .what { color:var(--muted); margin-top:2px }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+  .chips { display:flex; gap:8px; flex-wrap:wrap }
+  .chip { padding:5px 10px; border-radius:999px; background:var(--soft); font-size:13px; }
+  .chip.ok { color:var(--ok) } .chip.warn { color:var(--warn) }
+  .say { display:flex; gap:8px; }
+  .say input { flex:1 }
+  table { width:100%; border-collapse:collapse; font-size:14px }
+  th { text-align:left; color:var(--muted); font-weight:500; padding:6px 8px; border-bottom:1px solid var(--line) }
+  td { padding:9px 8px; border-bottom:1px solid var(--line); vertical-align:middle }
+  tr:last-child td { border-bottom:none }
+  .pipe { display:flex; gap:4px }
+  .pipe i { display:block; width:18px; height:6px; border-radius:3px; background:var(--line) }
+  .pipe i.on { background:var(--ok) }
+  .job { font-weight:600 }
+  .intent { color:var(--muted); font-size:13px }
+  .empty { color:var(--muted); padding:30px 0; text-align:center }
+  .next { background:var(--soft); border-radius:10px; padding:12px 14px; }
+  .next b { display:block; margin-bottom:4px }
+  code { background:var(--soft); padding:2px 6px; border-radius:6px; font-size:13px }
+  .toast { position:fixed; bottom:18px; left:50%; transform:translateX(-50%); background:var(--accent); color:var(--accent-ink); padding:10px 16px; border-radius:10px; opacity:0; transition:opacity .2s; pointer-events:none }
+  .toast.show { opacity:1 }
+  .inbox { font-size:13px; color:var(--muted) }
+</style>
+</head>
+<body>
+<header>
+  <h1>Studio</h1>
+  <span class="sub" id="summary">loading…</span>
+  <span class="spacer"></span>
+  <span class="inbox" id="inbox"></span>
+  <button id="refresh">Refresh</button>
+</header>
+<main>
+  <aside class="panel">
+    <div class="brands" id="brands"></div>
+    <div class="newbrand">
+      <input id="newname" placeholder="new client, e.g. acme-coffee" spellcheck="false">
+      <button id="newbtn">Add</button>
+    </div>
+  </aside>
+  <section class="panel detail" id="detail"></section>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const $ = s => document.querySelector(s);
+let S = null, selected = null;
+
+async function api(path, body) {
+  const r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : {});
+  const j = await r.json();
+  if (j.error) { toast(j.error); throw new Error(j.error); }
+  return j;
+}
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 2200); }
+function ago(ts) { const d = (Date.now()/1000 - ts); if (d < 3600) return Math.max(1, Math.round(d/60)) + ' min ago'; if (d < 86400) return Math.round(d/3600) + ' h ago'; return Math.round(d/86400) + ' d ago'; }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function load() {
+  S = await api('/api/state');
+  if (!selected || !S.brands.find(b => b.name === selected)) selected = S.active || (S.brands.find(b => !b.agency) || S.brands[0]).name;
+  render();
+}
+
+function render() {
+  const clients = S.brands.filter(b => !b.agency);
+  const jobs = clients.reduce((n, b) => n + b.jobs.length, 0);
+  $('#summary').textContent = `${clients.length} client${clients.length === 1 ? '' : 's'} · ${jobs} reel${jobs === 1 ? '' : 's'} · active: ${S.active || 'none'}`;
+  $('#inbox').textContent = S.inbox.length ? `inbox: ${S.inbox.length} clip${S.inbox.length === 1 ? '' : 's'} waiting` : 'inbox empty';
+  $('#brands').innerHTML = S.brands.map(b => `
+    <div class="brand ${b.active ? 'active' : ''} ${b.name === selected ? 'selected' : ''} ${b.agency ? 'agency' : ''}" data-b="${esc(b.name)}">
+      <span class="dot" title="${b.active ? 'active brand' : ''}"></span>
+      <span class="name">${esc(b.agency ? 'Agency defaults' : b.display)}</span>
+      <span class="n">${b.agency ? '' : b.jobs.length}</span>
+    </div>`).join('');
+  document.querySelectorAll('.brand').forEach(el => el.onclick = () => { selected = el.dataset.b; render(); });
+  const b = S.brands.find(x => x.name === selected);
+  $('#detail').innerHTML = detail(b);
+  const use = $('#use'); if (use) use.onclick = async () => { await api('/api/use', {brand: b.name}); toast(`Active: ${b.display}`); load(); };
+  document.querySelectorAll('[data-open]').forEach(el => el.onclick = () => api('/api/open', {path: el.dataset.open}));
+  const say = $('#saybtn'); if (say) say.onclick = async () => { const t = $('#saytext').value.trim(); if (!t) return; await api('/api/say', {text: `[${b.name}] ${t}`}); $('#saytext').value = ''; toast('Noted for Claude: say "studio notes" in the chat'); };
+}
+
+function detail(b) {
+  const setup = [];
+  if (b.kit_blanks < 0) setup.push(['warn', 'no brand kit']);
+  else if (b.kit_blanks > 0) setup.push(['warn', `${b.kit_blanks} kit fields blank`]);
+  else setup.push(['ok', 'kit complete']);
+  setup.push([b.packs.length ? 'ok' : '', b.packs.length ? `packs: ${b.packs.join(', ')}` : `pack: ${b.pack} (inherited)`]);
+  setup.push([b.fonts.length ? 'ok' : '', `${b.fonts.length} font${b.fonts.length === 1 ? '' : 's'}`]);
+  setup.push(['', `${b.learned} learned preference${b.learned === 1 ? '' : 's'}`]);
+  if (b.register) setup.push(['', `usually ${b.register}`]);
+  const next = b.agency
+    ? (b.kit_blanks > 0 ? 'Say <code>build the homebase for _agency</code> to set the house defaults every client inherits.' : 'House defaults are set. Every client inherits them until they get their own.')
+    : b.kit_blanks !== 0 ? `Say <code>build the homebase for ${esc(b.name)}</code> and feed Claude the client's brief.`
+    : !b.active ? 'Make this brand active, then drop a clip in <code>inbox/</code> and say <code>edit this reel</code>.'
+    : S.inbox.length ? `A clip is waiting in <code>inbox/</code>. Say <code>edit this reel</code>.`
+    : 'Drop the client\'s clip in <code>inbox/</code> and say <code>edit this reel</code>.';
+  const rows = b.jobs.map(j => `
+    <tr>
+      <td><div class="job">${esc(j.name)}</div><div class="intent">${esc(j.intent)}</div></td>
+      <td><div class="pipe" title="${j.stages.map(s => (s.done ? '● ' : '○ ') + s.name).join('  ')}">${j.stages.map(s => `<i class="${s.done ? 'on' : ''}"></i>`).join('')}</div></td>
+      <td>${esc(j.stage)}</td>
+      <td class="intent">${ago(j.updated)}</td>
+      <td><button data-open="${esc(j.path)}">Open</button></td>
+    </tr>`).join('');
+  return `
+    <div class="row">
+      <div style="flex:1">
+        <h2>${esc(b.agency ? 'Agency defaults' : b.display)}</h2>
+        <div class="what">${esc(b.what || (b.agency ? 'Inherited by every client that has no setting of its own.' : b.name))}</div>
+      </div>
+      ${b.agency ? '' : (b.active ? '<span class="chip ok">active brand</span>' : '<button class="primary" id="use">Make active</button>')}
+      <button data-open="${esc(b.path)}">Open folder</button>
+    </div>
+    <div class="chips">${setup.map(([c, t]) => `<span class="chip ${c}">${esc(t)}</span>`).join('')}</div>
+    <div class="next"><b>Next</b>${next}</div>
+    ${b.agency ? '' : `
+    <div>
+      <table>
+        <thead><tr><th>Reel</th><th>footage · words · cut · plan · layers · final</th><th>Stage</th><th>Updated</th><th></th></tr></thead>
+        <tbody>${rows || `<tr><td colspan="5" class="empty">No reels yet for this client.</td></tr>`}</tbody>
+      </table>
+    </div>
+    <div class="say"><input id="saytext" placeholder="A note for Claude about this client (read with “studio notes”)"><button id="saybtn">Leave note</button></div>`}
+  `;
+}
+
+$('#refresh').onclick = load;
+$('#newbtn').onclick = async () => {
+  const name = $('#newname').value.trim(); if (!name) return;
+  await api('/api/new', {brand: name}); $('#newname').value = ''; selected = name.toLowerCase().replace(/\s+/g, '-'); toast('Brand made and active');
+  load();
+};
+$('#newname').addEventListener('keydown', e => { if (e.key === 'Enter') $('#newbtn').click(); });
+load(); setInterval(load, 15000);
+</script>
+</body>
+</html>

@@ -25,7 +25,9 @@ fonts and projects. The active brand is `_local/active-brand` (`uv run engine/br
   `homebase` fills its kit.
 - Settings resolve brand → `brands/_agency` → engine default. Teach a brand with `learn`; teach every
   brand with `learn … --brand _agency`.
-- Never let one brand's voice, pack or learned preference leak into another's reel. Every reel is 9:16. One format at v0: **Yap**, a talking-head take cut down,
+- Never let one brand's voice, pack or learned preference leak into another's reel.
+- **The Studio** (`studio` skill) is the editor's map: every client, every reel, its stage. Offer it
+  once per session; whenever they ask where something is, open it rather than describing paths. Every reel is 9:16. One format at v0: **Yap**, a talking-head take cut down,
 with a hook, captions and a few graphics.
 
 ## The road, locked
@@ -92,6 +94,7 @@ Job names are what they would call the reel out loud, kebab-case: `the-pricing-o
 ## Phrasebook
 
 - "set me up", "setup", "first run" → `set-me-up`
+- "open my studio", "show my clients", "client dashboard", "studio notes" → `studio` (the page)
 - "switch to <brand>", "which brand", "new brand <name>" → `engine/brand.py` (no skill needed)
 - "build the homebase for <brand>", "set up <brand>'s brand kit" → `homebase`
 - "edit this reel", "cut this", "edit my newest clip", "rough cut" → `rough-cut`

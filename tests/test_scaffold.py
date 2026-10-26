@@ -48,3 +48,10 @@ def test_brand_resolution_order(tmp_path=None):
         shutil.rmtree(brand.BRANDS / name)
         prefs.forget(1, brand="_agency")
         brand.ACTIVE.unlink(missing_ok=True)
+
+def test_studio_state_shape():
+    sys.path.insert(0, str(ROOT))
+    from engine.studio.server import state
+    s = state()
+    assert s["brands"][0]["name"] == "_agency"
+    assert {"active", "brands", "inbox"} <= set(s)
