@@ -1,0 +1,24 @@
+[project]
+name = "reels-engine"
+version = "0.1.0"
+description = "Turns a phone clip into a finished 9:16 reel. Claude is the editor; this is its toolbelt."
+requires-python = ">=3.11,<3.12"
+dependencies = [
+  "opencv-python-headless>=4.10",
+  "numpy>=1.26,<2",
+  "pillow>=10",
+]
+
+[project.optional-dependencies]
+# The speech tools live in their own group so the base install stays light.
+speech = [
+  "whisperx==3.8.6",
+  "torch==2.8.0",
+  "torchaudio==2.8.0",
+  "ctranslate2==4.8.1",
+  "faster-whisper>=1.1",
+]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

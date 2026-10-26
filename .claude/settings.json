@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ffmpeg *)",
+      "Bash(ffprobe *)",
+      "Bash(./check-setup.sh*)",
+      "Bash(uv run engine/*)",
+      "Bash(uv sync*)",
+      "Bash(npx hyperframes *)"
+    ],
+    "deny": [
+      "Read(~/.ssh/**)",
+      "Edit(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Edit(~/.aws/**)",
+      "Read(~/Library/Keychains/**)",
+      "Bash(npx hyperframes usage*)",
+      "Bash(npx hyperframes feedback*)"
+    ]
+  },
+  "env": {
+    "HYPERFRAMES_NO_TELEMETRY": "1",
+    "DO_NOT_TRACK": "1"
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/session-nudge.sh", "timeout": 5 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/protect-drafts.sh", "timeout": 5 }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt|elicitation_dialog",
+        "hooks": [
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/chime.sh", "timeout": 3 }
+        ]
+      }
+    ]
+  }
+}

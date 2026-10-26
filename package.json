@@ -1,0 +1,8 @@
+{
+  "name": "reels-engine-render",
+  "private": true,
+  "description": "Pins the graphics renderer. Never @latest; moving the pin is a deliberate change.",
+  "devDependencies": {
+    "hyperframes": "0.8.181"
+  }
+}

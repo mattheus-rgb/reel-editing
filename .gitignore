@@ -1,0 +1,13 @@
+_local/
+projects/
+inbox/
+packs/user-*.json
+engine/packs/user-*.json
+*.mp4
+*.mov
+*.MOV
+*.wav
+.venv/
+node_modules/
+__pycache__/
+.DS_Store

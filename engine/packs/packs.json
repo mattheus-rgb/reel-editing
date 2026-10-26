@@ -1,0 +1,18 @@
+{
+  "font_dir": "assets/fonts",
+  "packs": {
+    "Neutral": {
+      "vibe": "quiet, readable, white type straight on the footage",
+      "fonts": {"headline": "Inter-Black.ttf", "caption": "InstrumentSerif-Regular.ttf", "aside": "InstrumentSerif-Italic.ttf"},
+      "roles": {
+        "hook":     {"font": "headline", "size": 72, "case": "sentence", "tracking": -0.01, "max_lines": 2},
+        "caption":  {"font": "caption",  "size": 56, "case": "lower",    "tracking": 0,     "max_lines": 3},
+        "takeover": {"font": "aside",    "size": 180, "case": "lower",   "tracking": 0,     "max_lines": 1},
+        "aside":    {"font": "aside",    "size": 44, "case": "lower",    "tracking": 0,     "max_lines": 2}
+      },
+      "colors": {"light": "#FFFFFF", "dark": "#111111", "accent": "#FFFFFF"},
+      "shadow": "0 6px 32px rgba(0,0,0,.55)",
+      "motion": {"hook": "rise", "caption": "fade-per-word", "takeover": "pop", "aside": "typewriter"}
+    }
+  }
+}
