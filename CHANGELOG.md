@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.1 — 2026-10-26
+
+- The Studio has a How to tab: the road, what to say, how brands resolve, the stage bar, the rules,
+  and what to do when something goes wrong. The page says so plainly when its server is not running.
+
 ## v0.1.0 — 2026-10-26
 
 The multi-brand scaffold, with a Studio page.

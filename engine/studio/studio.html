@@ -13,6 +13,24 @@
   body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 -apple-system, "Inter", system-ui, sans-serif; }
   header { display:flex; align-items:baseline; gap:16px; padding:22px 28px 10px; }
   header h1 { font-size:22px; margin:0; letter-spacing:-.01em }
+  nav { display:flex; gap:4px; margin-left:8px }
+  nav button { border:none; background:transparent; color:var(--muted); padding:6px 10px; border-radius:8px }
+  nav button.on { background:var(--soft); color:var(--ink); font-weight:600 }
+  .howto { padding:26px 30px 40px; max-width:860px; display:flex; flex-direction:column; gap:26px }
+  .howto h2 { margin:0 0 6px; font-size:24px; letter-spacing:-.01em }
+  .howto h3 { margin:0 0 8px; font-size:16px }
+  .howto p { margin:0 0 8px; color:var(--ink) }
+  .howto p.muted { color:var(--muted) }
+  .road { display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:14px }
+  .road .step { padding:8px 12px; background:var(--soft); border-radius:10px }
+  .road .step b { display:block; font-size:13px }
+  .road .step span { color:var(--muted); font-size:12px }
+  .road .pause { color:var(--warn); font-size:12px; padding:0 2px }
+  .say-table td:first-child { white-space:nowrap }
+  .say-table code { white-space:nowrap }
+  .rules { margin:0; padding-left:20px; display:grid; gap:6px }
+  .qa dt { font-weight:600; margin-top:10px } .qa dd { margin:2px 0 0; color:var(--muted) }
+  [hidden] { display:none !important }
   header .sub { color:var(--muted) }
   header .spacer { flex:1 }
   main { display:grid; grid-template-columns: 300px 1fr; gap:20px; padding:10px 28px 40px; min-height: calc(100vh - 70px); }
@@ -62,6 +80,7 @@
 <body>
 <header>
   <h1>Studio</h1>
+  <nav><button id="tab-brands" class="on">Brands</button><button id="tab-howto">How to</button></nav>
   <span class="sub" id="summary">loading…</span>
   <span class="spacer"></span>
   <span class="inbox" id="inbox"></span>
@@ -77,6 +96,97 @@
   </aside>
   <section class="panel detail" id="detail"></section>
 </main>
+<section class="panel howto" id="howto" hidden>
+  <div>
+    <h2>How to use the engine</h2>
+    <p class="muted">You cut reels for several clients in Claude Code; this engine is Claude's toolbelt and rulebook. This page is the map. The chat is where the editing happens.</p>
+  </div>
+
+  <div>
+    <h3>The road, every reel</h3>
+    <div class="road">
+      <div class="step"><b>1 · Pick the brand</b><span>on this page, or "switch to acme"</span></div>
+      <div class="step"><b>2 · Drop the clip</b><span>into <code>inbox/</code></span></div>
+      <div class="step"><b>3 · "edit this reel"</b><span>transcribe, cut, stitch, level</span></div>
+      <div class="pause">⏸ you review</div>
+      <div class="step"><b>4 · "plan the graphics"</b><span>register and finish asked here</span></div>
+      <div class="pause">⏸ approve</div>
+      <div class="step"><b>5 · "beat sheet"</b><span>numbered stills; send to the client</span></div>
+      <div class="pause">⏸ approve</div>
+      <div class="step"><b>6 · "build it"</b><span>render once → MP4 or CapCut</span></div>
+    </div>
+    <p class="muted" style="margin-top:10px">Nothing about the reel is asked before the cut. Every ⏸ is one approval; after the build there are no more creative choices.</p>
+  </div>
+
+  <div>
+    <h3>What to say</h3>
+    <table class="say-table">
+      <thead><tr><th>Say</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td><code>set me up</code></td><td>Installs the tools, builds the toolbelt and renderer. First run only.</td></tr>
+        <tr><td><code>new brand acme-coffee</code></td><td>Makes <code>brands/acme-coffee/</code> from the template and makes it active. Same as "Add" here.</td></tr>
+        <tr><td><code>build the homebase for acme-coffee</code></td><td>Fills the client's brand kit from their brief: voice, look, banned words, transcriber fixes. Paste the brief in; Claude proposes answers for approval.</td></tr>
+        <tr><td><code>switch to acme-coffee</code></td><td>Changes the active brand. Claude names it in its first line before any cut.</td></tr>
+        <tr><td><code>edit this reel</code></td><td>Newest clip in <code>inbox/</code> becomes a job under the active brand; the rough cut comes back for your review.</td></tr>
+        <tr><td><code>plan the graphics</code></td><td>Line by line, what goes on screen. Two questions: teaching or confessional, MP4 or CapCut.</td></tr>
+        <tr><td><code>beat sheet</code></td><td>One image, numbered stills with a legend. Give notes by number: "beat 3 smaller".</td></tr>
+        <tr><td><code>build it</code></td><td>Every layer rendered once in the brand's pack, composited, delivered.</td></tr>
+        <tr><td><code>remember that</code></td><td>Keeps a preference for this brand (captions above the head, lighter sound…). Say "for every brand" to keep it agency-wide.</td></tr>
+        <tr><td><code>studio notes</code></td><td>Claude reads the notes you left on this page.</td></tr>
+        <tr><td><code>open my studio</code></td><td>Opens this page.</td></tr>
+        <tr><td><code>/report-a-problem</code></td><td>Collects what happened into one file before anyone digs by hand.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <h3>Brands: how a client's voice gets into a reel</h3>
+    <p>Each client is a folder under <code>brands/</code>: their <code>brand-kit.md</code>, their style packs, their licensed fonts, their learned preferences and their reels. <b>Agency defaults</b> is the layer every client inherits from.</p>
+    <p>Any setting resolves <b>brand → agency → engine default</b>. A client with no pack of their own gets the agency's; a client with no kit yet gets agency defaults and a nudge to fill theirs. One client's voice never reaches another's reel.</p>
+    <p class="muted">The chips on a brand's card tell you what is still missing: kit fields blank, no fonts, no pack of their own.</p>
+  </div>
+
+  <div>
+    <h3>Reading the stage bar</h3>
+    <div class="road">
+      <div class="step"><b>footage</b><span>clip copied in</span></div>
+      <div class="step"><b>words</b><span>transcribed once</span></div>
+      <div class="step"><b>cut</b><span>rough cut rendered</span></div>
+      <div class="step"><b>plan</b><span>graphics planned</span></div>
+      <div class="step"><b>layers</b><span>graphics built</span></div>
+      <div class="step"><b>final</b><span>reel delivered</span></div>
+    </div>
+    <p class="muted" style="margin-top:10px">Each segment lights up when the file that proves that stage exists. "Open" shows you the job folder.</p>
+  </div>
+
+  <div>
+    <h3>The rules Claude works by</h3>
+    <ol class="rules">
+      <li>Plan, approve, build once. It never builds off a guess.</li>
+      <li>Transcribe once; the cut script is truth. Fix a word there and it fixes everywhere.</li>
+      <li>Cut by transcript, clean by sound. No boundary is ever trimmed by eye.</li>
+      <li>Measure, never eyeball: text is placed from where the speaker's head actually is.</li>
+      <li>A check warns, never blocks. You always get the reel, plus one plain line about anything flagged.</li>
+      <li>One layer per change. Changing one graphic never re-renders the reel.</li>
+      <li>A style pack is config. Fonts, colours, sizes come from the brand's pack by role.</li>
+      <li>Never replace a CapCut draft; versions go 1.1 → 1.2, and CapCut is quit for every write.</li>
+      <li>Every on-screen word is the client's, in the client's language. Nothing invented.</li>
+      <li>Nothing leaves this computer.</li>
+    </ol>
+  </div>
+
+  <div>
+    <h3>When something goes wrong</h3>
+    <dl class="qa">
+      <dt>Claude asks which brand every time.</dt><dd>No brand is active. Press "Make active" here, or say "switch to &lt;brand&gt;".</dd>
+      <dt>The hook or captions came out in the wrong voice.</dt><dd>Check the active brand and its kit. The kit is the only source of voice; fill it before cutting.</dd>
+      <dt>Text sits on the speaker's face.</dt><dd>Say where you want it ("captions above the head"), then "remember that" so it sticks for this brand.</dd>
+      <dt>A render hangs or crawls.</dt><dd>Say "/report-a-problem". Never stop a render that is still counting frames.</dd>
+      <dt>Fonts look wrong.</dt><dd>The brand's licensed fonts go in <code>brands/&lt;brand&gt;/fonts/</code>. The Neutral pack's fonts go in <code>assets/fonts/</code>.</dd>
+      <dt>I want the designer's eye on it before the client.</dt><dd>The beat sheet is the hand-off: one numbered image, notes by beat number, before anything renders.</dd>
+    </dl>
+  </div>
+</section>
 <div class="toast" id="toast"></div>
 <script>
 const $ = s => document.querySelector(s);
@@ -93,7 +203,8 @@ function ago(ts) { const d = (Date.now()/1000 - ts); if (d < 3600) return Math.m
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function load() {
-  S = await api('/api/state');
+  try { S = await api('/api/state'); }
+  catch (e) { $('#summary').textContent = 'the studio server is not running: say "open my studio"'; return; }
   if (!selected || !S.brands.find(b => b.name === selected)) selected = S.active || (S.brands.find(b => !b.agency) || S.brands[0]).name;
   render();
 }
@@ -162,6 +273,14 @@ function detail(b) {
   `;
 }
 
+function showTab(which) {
+  const brands = which === 'brands';
+  document.querySelector('main').hidden = !brands; $('#howto').hidden = brands;
+  $('#tab-brands').classList.toggle('on', brands); $('#tab-howto').classList.toggle('on', !brands);
+  try { localStorage.setItem('studio-tab', which); } catch (e) {}
+}
+$('#tab-brands').onclick = () => showTab('brands'); $('#tab-howto').onclick = () => showTab('howto');
+try { if (localStorage.getItem('studio-tab') === 'howto') showTab('howto'); } catch (e) {}
 $('#refresh').onclick = load;
 $('#newbtn').onclick = async () => {
   const name = $('#newname').value.trim(); if (!name) return;
