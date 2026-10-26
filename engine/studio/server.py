@@ -58,6 +58,48 @@ def _jobs(brand: str) -> list[dict]:
                     "updated": int(j.stat().st_mtime), "path": str(j)})
     return out
 
+MEDIA = {".mov", ".mp4", ".m4v", ".wav", ".mp3", ".m4a", ".jpg", ".jpeg", ".png", ".gif"}
+TEXTY = {".json", ".md", ".ttf", ".otf"}
+
+def _entry(path: Path, where: str, brand: str = "", job: str = "") -> dict:
+    st = path.stat()
+    return {"name": path.name, "where": where, "brand": brand, "job": job,
+            "kind": "video" if path.suffix.lower() in (".mov", ".mp4", ".m4v") else
+                    "audio" if path.suffix.lower() in (".wav", ".mp3", ".m4a") else
+                    "image" if path.suffix.lower() in (".jpg", ".jpeg", ".png", ".gif") else
+                    "font" if path.suffix.lower() in (".ttf", ".otf") else "file",
+            "size": st.st_size, "updated": int(st.st_mtime), "path": str(path),
+            "rel": str(path.relative_to(ROOT))}
+
+def files() -> dict:
+    """Every file the Studio can reach: inbox clips, each reel's footage, cuts, plans, layers and
+    finals, and each brand's kit, packs and fonts. Nothing outside this folder."""
+    out = []
+    inbox = ROOT / "inbox"
+    if inbox.is_dir():
+        for f in sorted(inbox.iterdir(), key=lambda p: p.name.lower()):
+            if f.is_file() and not f.name.startswith(".") and f.suffix.lower() in MEDIA:
+                out.append(_entry(f, "inbox"))
+    for brand in ["_agency"] + B.list_brands():
+        bp = B.paths(brand)
+        for name in ("brand-kit.md", "packs.json", "learned.json"):
+            if (bp["root"] / name).exists(): out.append(_entry(bp["root"] / name, "brand", brand))
+        if bp["fonts"].is_dir():
+            for f in sorted(bp["fonts"].iterdir()):
+                if f.is_file() and f.suffix.lower() in TEXTY: out.append(_entry(f, "fonts", brand))
+        if not bp["projects"].is_dir(): continue
+        for j in sorted(bp["projects"].iterdir()):
+            if not j.is_dir() or j.name.startswith("."): continue
+            for sub, label in (("raw", "footage"), ("outputs", "outputs"), ("layers", "layers"),
+                               ("beat-sheet", "beat sheet"), ("plans", "plans"), ("transcript", "transcript")):
+                d = j / sub
+                if not d.is_dir(): continue
+                for f in sorted(d.rglob("*")):
+                    if f.is_file() and not f.name.startswith(".") and f.suffix.lower() in MEDIA | TEXTY:
+                        out.append(_entry(f, label, brand, j.name))
+            if (j / "intent.md").exists(): out.append(_entry(j / "intent.md", "plans", brand, j.name))
+    return {"files": out, "root": str(ROOT), "count": len(out), "bytes": sum(f["size"] for f in out)}
+
 def state() -> dict:
     active = B.current(strict=False)
     brands = []
@@ -99,6 +141,8 @@ class Handler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", str(len(body))); self.end_headers(); self.wfile.write(body)
         elif self.path == "/api/state":
             self._json(state())
+        elif self.path == "/api/files":
+            self._json(files())
         elif self.path == "/ping":
             self._json({"ok": True})
         else:
@@ -202,6 +246,7 @@ if __name__ == "__main__":
     if cmd == "serve": serve()
     elif cmd == "open": open_()
     elif cmd == "state": print(json.dumps(state(), indent=2))
+    elif cmd == "files": print(json.dumps(files(), indent=2))
     elif cmd == "stop": stop()
     elif cmd == "say":
         q = ROOT / "_local" / "studio-says.json"
