@@ -26,5 +26,25 @@ def test_every_skill_has_frontmatter():
         text = (s / "SKILL.md").read_text()
         assert text.startswith("---\nname: " + s.name), s.name
 
-def test_brand_kit_blanks_counted():
-    assert (ROOT / "brand-kit.md").read_text().count("{{") >= 20
+def test_brand_template_blanks_counted():
+    assert (ROOT / "brands/_template/brand-kit.md").read_text().count("{{") >= 20
+
+def test_brand_resolution_order(tmp_path=None):
+    import shutil
+    sys.path.insert(0, str(ROOT))
+    from engine import brand
+    from engine.learn import prefs
+    name = "zz-test-brand"
+    if (brand.BRANDS / name).exists(): shutil.rmtree(brand.BRANDS / name)
+    brand.new(name); brand.use(name)
+    try:
+        assert prefs.get("sfx.density", name) == "light"          # engine default
+        prefs.add("sfx.density", "full", "t", brand="_agency")    # agency layer
+        assert prefs.get("sfx.density", name) == "full"
+        prefs.add("sfx.density", "none", "t", brand=name)         # brand wins
+        assert prefs.get("sfx.density", name) == "none"
+        assert brand.job_dir(f"{name}/x", create=True).parent == brand.paths(name)["projects"]
+    finally:
+        shutil.rmtree(brand.BRANDS / name)
+        prefs.forget(1, brand="_agency")
+        brand.ACTIVE.unlink(missing_ok=True)

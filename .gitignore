@@ -11,3 +11,7 @@ engine/packs/user-*.json
 node_modules/
 __pycache__/
 .DS_Store
+brands/*/projects/
+brands/*/fonts/
+brands/*/learned.json
+!brands/_agency/learned.json

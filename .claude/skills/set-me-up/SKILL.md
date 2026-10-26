@@ -14,6 +14,7 @@ One warm line, then do the work. Ask before each install; never type their passw
 4. `uv sync`, then `uv sync --extra speech` (say it takes a few minutes, send them off).
 5. `npm install`, then `npx hyperframes browser ensure`.
 6. `./check-setup.sh` again until it passes.
-7. Offer "build my homebase" (the `homebase` skill). If they would rather edit now, edit now.
+7. Fill `brands/_agency/brand-kit.md` with the house defaults (the `homebase` skill on `_agency`),
+   then make the first client: "new brand <name>" and its homebase.
 
-**Next:** "build my homebase", or drop a clip in `inbox/` and say "edit this reel".
+**Next:** "new brand <name>", then drop a clip in `inbox/` and say "edit this reel".

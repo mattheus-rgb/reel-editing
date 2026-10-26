@@ -5,7 +5,8 @@ description: Decides line by line what goes on screen, once the cut is approved.
 
 # Creative plan
 
-1. Read `outputs/<job>.script.json` and `brand-kit.md` Parts B and C.
+1. Read `outputs/<job>.script.json` and the brand's `brand-kit.md` Parts B and C (brand first, then
+   `brands/_agency/brand-kit.md` for anything blank).
 2. **Measure.** `uv run engine/measure/subject.py <job>` → `plans/subject.json` (head box, open zones).
 3. **Register ⏸.** ONE pick-one: "Teaching or confessional?" with the kit's usual register marked.
    Teaching = hook, captions, up to three cards or list lines, a takeover word on the payoff.
@@ -13,7 +14,7 @@ description: Decides line by line what goes on screen, once the cut is approved.
 4. **Finish ⏸.** ONE pick-one: "MP4, or a CapCut draft?" (CapCut only once `engine/capcut/` exists).
 5. Write `plans/graphics.json`: `{job, register, finish, pack, beats:[{id, start, end, line, element,
    zone, text, why}]}`. `zone` comes from `plans/subject.json`, never typed. Every `text` is their
-   words in their language; the hook never mirrors their spoken opener.
+   words in the brand's language and voice; the hook never mirrors the spoken opener.
 6. Record: `uv run engine/review/gates.py record <job> register=… finish=…`.
 7. Show the plan inline as a table (`uv run engine/review/plan_table.py <job>`). ⏸ one approval.
 
