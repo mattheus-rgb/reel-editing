@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.2 — 2026-10-26
+
+- A brand added on the Studio page is committed to git at once (its kit and packs; footage and fonts
+  stay out). The page says so, or says why not.
+- Pressing Enter in the new-client box adds once, not twice.
+- Every page action explains itself when the Studio server is not running.
+
 ## v0.1.1 — 2026-10-26
 
 - The Studio has a How to tab: the road, what to say, how brands resolve, the stage bar, the rules,

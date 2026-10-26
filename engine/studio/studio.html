@@ -193,18 +193,21 @@ const $ = s => document.querySelector(s);
 let S = null, selected = null;
 
 async function api(path, body) {
-  const r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : {});
+  let r;
+  try { r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : {}); }
+  catch (e) { if (body) toast('The studio server is not running. In the chat, say: open my studio'); throw e; }
   const j = await r.json();
   if (j.error) { toast(j.error); throw new Error(j.error); }
   return j;
 }
-function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 2200); }
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'), 5000); }
 function ago(ts) { const d = (Date.now()/1000 - ts); if (d < 3600) return Math.max(1, Math.round(d/60)) + ' min ago'; if (d < 86400) return Math.round(d/3600) + ' h ago'; return Math.round(d/86400) + ' d ago'; }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function load() {
   try { S = await api('/api/state'); }
-  catch (e) { $('#summary').textContent = 'the studio server is not running: say "open my studio"'; return; }
+  catch (e) { $('#summary').textContent = 'the studio server is not running: say "open my studio" in the chat, then Refresh'; $('#summary').style.color = 'var(--warn)'; return; }
+  $('#summary').style.color = '';
   if (!selected || !S.brands.find(b => b.name === selected)) selected = S.active || (S.brands.find(b => !b.agency) || S.brands[0]).name;
   render();
 }
@@ -282,12 +285,19 @@ function showTab(which) {
 $('#tab-brands').onclick = () => showTab('brands'); $('#tab-howto').onclick = () => showTab('howto');
 try { if (localStorage.getItem('studio-tab') === 'howto') showTab('howto'); } catch (e) {}
 $('#refresh').onclick = load;
+let adding = false;
 $('#newbtn').onclick = async () => {
-  const name = $('#newname').value.trim(); if (!name) return;
-  await api('/api/new', {brand: name}); $('#newname').value = ''; selected = name.toLowerCase().replace(/\s+/g, '-'); toast('Brand made and active');
-  load();
+  const name = $('#newname').value.trim(); if (!name || adding) return;
+  adding = true; $('#newbtn').disabled = true;
+  try {
+    const j = await api('/api/new', {brand: name});
+    $('#newname').value = ''; selected = name.toLowerCase().replace(/\s+/g, '-');
+    toast(`Made brands/${selected}/, now active. ${j.note || ''}`);
+    load();
+  } catch (e) {}
+  finally { adding = false; $('#newbtn').disabled = false; }
 };
-$('#newname').addEventListener('keydown', e => { if (e.key === 'Enter') $('#newbtn').click(); });
+$('#newname').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.repeat) { e.preventDefault(); $('#newbtn').click(); } });
 load(); setInterval(load, 15000);
 </script>
 </body>

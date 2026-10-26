@@ -124,6 +124,8 @@ class Handler(BaseHTTPRequestHandler):
                 shutil.copytree(B.BRANDS / "_template", B.BRANDS / b)
                 (B.BRANDS / b / "projects").mkdir(exist_ok=True); (B.BRANDS / b / "fonts").mkdir(exist_ok=True)
                 B.ACTIVE.parent.mkdir(exist_ok=True); B.ACTIVE.write_text(b + "\n")
+                note = _commit(f"brands/{b}", f"Add brand {b}")
+                return self._json({"ok": True, "note": note, "state": state()})
             elif self.path == "/api/open":
                 p = Path(data.get("path", "")).resolve()
                 if ROOT not in p.parents and p != ROOT: raise ValueError("outside the engine")
@@ -138,6 +140,19 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"ok": True, "state": state()})
         except Exception as e:  # the page shows the reason
             self._json({"error": str(e)}, 400)
+
+def _commit(rel: str, message: str) -> str:
+    """Commit one brand folder's tracked files (kit, packs). Footage and fonts stay ignored."""
+    if not (ROOT / ".git").exists():
+        return "not committed: this folder is not a git repository"
+    try:
+        subprocess.run(["git", "add", rel], cwd=ROOT, check=True, capture_output=True)
+        r = subprocess.run(["git", "commit", "-q", "-m", message], cwd=ROOT, capture_output=True, text=True)
+        if r.returncode != 0:
+            return "not committed: " + (r.stderr or r.stdout).strip().splitlines()[-1][:120]
+        return f"committed as \"{message}\" (push when you are ready: git push)"
+    except Exception as e:
+        return f"not committed: {e}"
 
 def _port() -> int:
     if os.environ.get("STUDIO_PORT"): return int(os.environ["STUDIO_PORT"])
