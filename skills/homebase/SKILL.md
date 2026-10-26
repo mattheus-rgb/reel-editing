@@ -8,7 +8,7 @@ description: Fills a client brand's kit from its brief. Use when they say "build
 Fills `brands/<brand>/brand-kit.md` for one client, one part at a time. The client's words go in
 (from their brief, site, past posts or the editor's notes), never invented ones.
 
-0. No folder yet: `uv run engine/brand.py new <brand>`, then `brand.py use <brand>`.
+0. No folder yet: `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/brand.py new <brand>`, then `brand.py use <brand>`.
 1. Read the brand's `brand-kit.md`. Only ask about fields still blank (`{{...}}`). If the editor has a
    client brief or brand guide, read it first and propose answers for approval rather than asking.
 2. **Part A** (who): name, pronouns, handles, what they do, who for, what those people are stuck on.

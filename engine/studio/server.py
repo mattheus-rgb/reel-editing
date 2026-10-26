@@ -14,10 +14,11 @@ import json, os, re, signal, socket, subprocess, sys, time, webbrowser
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from engine.paths import CODE, WORK, ensure_workspace
 from engine import brand as B
 
+ROOT = WORK                      # the designer's workspace: brands/, inbox/, _local/
 HERE = Path(__file__).resolve().parent
 STATE = ROOT / "_local" / "studio.json"
 SAFE = re.compile(r"^[a-z0-9][a-z0-9-]{1,40}$")
@@ -165,7 +166,8 @@ class Handler(BaseHTTPRequestHandler):
                 if not SAFE.match(b) or b.startswith("_"): raise ValueError("name: letters, digits and dashes")
                 if (B.BRANDS / b).exists(): raise ValueError("that brand exists")
                 import shutil
-                shutil.copytree(B.BRANDS / "_template", B.BRANDS / b)
+                src = B.BRANDS / "_template" if (B.BRANDS / "_template").is_dir() else B.TEMPLATE
+                shutil.copytree(src, B.BRANDS / b)
                 (B.BRANDS / b / "projects").mkdir(exist_ok=True); (B.BRANDS / b / "fonts").mkdir(exist_ok=True)
                 B.ACTIVE.parent.mkdir(exist_ok=True); B.ACTIVE.write_text(b + "\n")
                 note = _commit(f"brands/{b}", f"Add brand {b}")
@@ -216,6 +218,7 @@ def _running() -> int | None:
         return None
 
 def serve() -> None:
+    ensure_workspace(ROOT)
     port = _port()
     STATE.parent.mkdir(exist_ok=True)
     STATE.write_text(json.dumps({"port": port, "pid": os.getpid()}))
@@ -223,6 +226,7 @@ def serve() -> None:
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
 
 def open_() -> None:
+    ensure_workspace(ROOT)
     port = _running()
     if port is None:
         subprocess.Popen([sys.executable, __file__, "serve"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)

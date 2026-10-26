@@ -15,3 +15,6 @@ brands/*/projects/
 brands/*/fonts/
 brands/*/learned.json
 !brands/_agency/learned.json
+dist/
+/brands/
+/CLAUDE.md

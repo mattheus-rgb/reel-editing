@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.0 — 2026-10-26
+
+- Installable as a Claude Code plugin (`.claude-plugin/plugin.json`, `skills/`, `hooks/hooks.json`,
+  a marketplace file) from GitHub, a ZIP, or managed settings for the whole organisation.
+- The engine's code and a designer's workspace are separate folders: brands, inbox and reels live in
+  whatever folder they open; the Studio makes it a workspace on first run, with the rules as its CLAUDE.md.
+- `build-zip.sh` builds the distributable ZIP; `INSTALL.md` has the three install routes.
+
 ## v0.2.0 — 2026-10-26
 
 - The Studio is minimalist and follows the system's light or dark setting.

@@ -27,7 +27,7 @@
       {
         "matcher": "startup|resume|clear|compact",
         "hooks": [
-          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/session-nudge.sh", "timeout": 5 }
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash hooks/session-nudge.sh", "timeout": 5 }
         ]
       }
     ],
@@ -35,7 +35,7 @@
       {
         "matcher": "Bash|Write|Edit|MultiEdit",
         "hooks": [
-          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/protect-drafts.sh", "timeout": 5 }
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash hooks/protect-drafts.sh", "timeout": 5 }
         ]
       }
     ],
@@ -43,7 +43,7 @@
       {
         "matcher": "permission_prompt|idle_prompt|elicitation_dialog",
         "hooks": [
-          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash .claude/hooks/chime.sh", "timeout": 3 }
+          { "type": "command", "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" && bash hooks/chime.sh", "timeout": 3 }
         ]
       }
     ]

@@ -5,8 +5,10 @@ notes=()
 for t in ffmpeg ffprobe uv node npx; do
   command -v "$t" >/dev/null 2>&1 || notes+=("$t is not installed: suggest 'set me up'.")
 done
-[ -d .venv ] || notes+=("The Python toolbelt is not built (no .venv): 'uv sync'.")
-[ -d node_modules/hyperframes ] || notes+=("The renderer is not installed: 'npm install'.")
+eng="${CLAUDE_PLUGIN_ROOT:-.}"
+[ -d "$eng/.venv" ] || notes+=("The Python toolbelt is not built: suggest 'set me up'.")
+[ -d "$eng/node_modules/hyperframes" ] || notes+=("The renderer is not installed: suggest 'set me up'.")
+[ -d brands ] || notes+=("This folder is not a workspace yet: 'open my studio' or 'set me up' makes it one (brands/, inbox/).")
 brand=$(cat _local/active-brand 2>/dev/null | tr -d '[:space:]')
 if [ -n "$brand" ] && [ -d "brands/$brand" ]; then
   notes+=("Active brand: $brand. Name it before the first cut; 'switch to <brand>' changes it.")

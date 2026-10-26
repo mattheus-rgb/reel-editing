@@ -12,9 +12,10 @@ import json, sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[1]
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(HERE.parents[1]))
+from engine.paths import CODE
 from engine.brand import chain
+ROOT = CODE
 
 def _packs(brand: str | None = None) -> dict:
     merged = json.loads((HERE / "packs.json").read_text()).get("packs", {})

@@ -6,7 +6,7 @@ user-invocable: true
 
 # Report a problem
 
-1. `uv run engine/doctor/report.py` collects: tools and versions, the last job's step log
+1. `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/doctor/report.py` collects: tools and versions, the last job's step log
    (`_local/steps.log`), what is still running, disk space, the tail of the last error.
    It writes `_local/problem-report.md`.
 2. Read it. If the engine already has a fix (a missing tool, a stale cache, CapCut still open),

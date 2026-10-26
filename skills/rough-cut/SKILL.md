@@ -7,23 +7,23 @@ description: The cut every reel starts from. Use when they say "edit this reel",
 
 Say it will take a few minutes the first time, then run the whole chain.
 
-0. **Brand.** `uv run engine/brand.py current`. Name it in your first line. None active and several
+0. **Brand.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/brand.py current`. Name it in your first line. None active and several
    exist: ONE pick-one. This is the only question before the cut.
 1. **Intake.** Newest clip in `inbox/` → `brands/<brand>/projects/<job>/raw/` (copy, never move).
    Job name: what the editor would call it out loud, kebab-case. Write `intent.md` after transcribing.
-2. **Transcribe once.** `uv run engine/cut/transcribe.py <job>` → `transcript/words.json`.
+2. **Transcribe once.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/cut/transcribe.py <job>` → `transcript/words.json`.
    Second runs return the cache; `--force` re-hears.
-3. **Plan.** `uv run engine/cut/plan.py <job> --print`. Then read it against the rules:
+3. **Plan.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/cut/plan.py <job> --print`. Then read it against the rules:
    - keep the last take of a line the speaker said more than once; never a question for anyone
    - drop filler-only fragments and false starts
    - keep every line that names an effect out loud ("imagine a big red arrow here")
    Edit `transcript/cuts.json` if the plan missed something. Never trim a boundary by eye.
-4. **Stitch.** `uv run engine/cut/stitch.py <job>` runs restarts → onset snap → close pauses → frame
+4. **Stitch.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/cut/stitch.py <job>` runs restarts → onset snap → close pauses → frame
    grid → one ffmpeg render → master. Writes `outputs/<job>.mp4`.
-5. **Script.** `uv run engine/cut/script.py <job>` → `outputs/<job>.script.json`, the cut-aligned words
+5. **Script.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/cut/script.py <job>` → `outputs/<job>.script.json`, the cut-aligned words
    with Part D fixes applied. Every later step reads this file.
-6. **Level.** `uv run engine/cut/level.py <job>`: voice to −16 LUFS, true peak ≤ −1.5 dBTP.
-7. **Review ⏸.** `uv run engine/review/beats.py <job> --cut-only` for stills of the cut; show the kept
+6. **Level.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/cut/level.py <job>`: voice to −16 LUFS, true peak ≤ −1.5 dBTP.
+7. **Review ⏸.** `uv run "${CLAUDE_PLUGIN_ROOT:-.}"/engine/review/beats.py <job> --cut-only` for stills of the cut; show the kept
    lines as a table with timings and a link to `outputs/<job>.mp4`. The editor reviews here; client
    sign-off, if the agency wants one, happens on the beat sheet later. Wait for notes or "looks good".
 

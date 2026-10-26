@@ -20,9 +20,19 @@ clip in inbox/ → rough cut → you review → creative plan → build → beat
   element on its own track.
 - **Learn.** Anything you want kept for next time becomes a bounded preference the builds apply.
 
+## Install
+
+It is a Claude Code plugin. One line, on Claude Code 2.1.275 or later:
+
+```bash
+/plugin install reel-editing --marketplace mattheus-rgb/reel-editing
+```
+
+Other ways (a ZIP, pre-enabling it for the whole organisation) are in `INSTALL.md`.
+
 ## Getting started
 
-1. Install [Claude Code](https://claude.com/claude-code) and open this folder in it.
+1. Make a folder for your clients, open it in Claude Code.
 2. Say **"set me up"**. Claude runs `./check-setup.sh`, installs what is missing (Homebrew is the
    one step you type yourself), builds the toolbelt and the renderer.
 3. Fill the house defaults: "build the homebase for _agency".
@@ -57,16 +67,16 @@ Keep this folder out of iCloud Drive; `~/projects/` is right.
 
 | Where | What |
 |---|---|
-| `CLAUDE.md` | the persona, the locked road and the twelve rules Claude follows every session |
-| `brands/<brand>/` | one per client: `brand-kit.md packs.json learned.json fonts/ projects/` |
-| `brands/_agency/` | house defaults every brand inherits; `brands/_template/` starts a new one |
-| `.claude/skills/` | one folder per phrase above: trigger words plus a numbered recipe |
-| `.claude/hooks/` | session briefing, CapCut draft guard, a chime when Claude waits |
+| `templates/workspace/` | what a designer's folder starts with: `CLAUDE.md` (the persona, the road, the rules), `brands/_agency`, `brands/_template` |
+| `<workspace>/brands/<brand>/` | one per client: `brand-kit.md packs.json learned.json fonts/ projects/` |
+| `<workspace>/brands/_agency/` | house defaults every brand inherits |
+| `skills/` | one folder per phrase above: trigger words plus a numbered recipe |
+| `hooks/` | session briefing, CapCut draft guard, a chime when Claude waits (`hooks.json`) |
 | `engine/` | the Python toolbelt, one package per stage (`cut`, `measure`, `packs`, `type`, `render`, `sound`, `review`, `learn`, `capcut`, `doctor`) |
 | `engine/packs/packs.json` | style packs; `user-packs.json` holds yours |
-| `brands/<brand>/projects/<job>/` | one folder per reel: `raw/ transcript/ outputs/ plans/ review/ layers/ beat-sheet/` |
-| `inbox/` | drop clips here |
-| `_local/` | the active brand, render cache, machine notes; never committed |
+| `<workspace>/brands/<brand>/projects/<job>/` | one folder per reel: `raw/ transcript/ outputs/ plans/ review/ layers/ beat-sheet/` |
+| `<workspace>/inbox/` | drop clips here |
+| `<workspace>/_local/` | the active brand, studio state; never committed |
 | `docs/` | the design blueprint and the build plan |
 | `tests/` | `uv sync --extra dev`, then `uv run pytest` |
 
@@ -83,7 +93,7 @@ client, open folders, leave a note Claude reads with "studio notes".
 
 ## Status
 
-v0.1. Real today: the rules, skills, brand-kit template, hooks, safe zones, the Neutral pack
+v0.3: installable as a plugin; the engine and each designer's workspace are separate folders. Real today: the rules, skills, brand-kit template, hooks, safe zones, the Neutral pack
 loader and learned preferences. Every other script in `engine/` is a stub carrying its contract in its
 docstring. Build order: cut → measure → type and render → plan, beat sheet, sound → homebase and packs
 → CapCut. See `docs/GENERIC-ENGINE-PLAN.md`.

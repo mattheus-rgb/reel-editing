@@ -22,12 +22,12 @@ def test_prefs_allowlist():
     assert prefs._coerce("music.duck_db", "-30") == -18.0
 
 def test_every_skill_has_frontmatter():
-    for s in (ROOT / ".claude/skills").iterdir():
+    for s in (ROOT / "skills").iterdir():
         text = (s / "SKILL.md").read_text()
         assert text.startswith("---\nname: " + s.name), s.name
 
 def test_brand_template_blanks_counted():
-    assert (ROOT / "brands/_template/brand-kit.md").read_text().count("{{") >= 20
+    assert (ROOT / "templates/workspace/brands/_template/brand-kit.md").read_text().count("{{") >= 20
 
 def test_brand_resolution_order(tmp_path=None):
     import shutil

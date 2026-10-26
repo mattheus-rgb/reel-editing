@@ -12,7 +12,7 @@ brand; a brand's own value wins over the agency's. Never learnable: register, ho
 import json, sys, datetime
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[2]  # the engine's code; brands live in the workspace
 sys.path.insert(0, str(ROOT))
 from engine.brand import chain, paths
 

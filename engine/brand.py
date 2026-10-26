@@ -18,12 +18,16 @@ the folders to look in, in that order.
 import shutil, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-BRANDS = ROOT / "brands"
-ACTIVE = ROOT / "_local" / "active-brand"
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from engine.paths import CODE, WORK
+ROOT = WORK
+BRANDS = WORK / "brands"
+ACTIVE = WORK / "_local" / "active-brand"
+TEMPLATE = CODE / "templates" / "workspace" / "brands" / "_template"
 RESERVED = {"_agency", "_template"}
 
 def list_brands() -> list[str]:
+    if not BRANDS.is_dir(): return []
     return sorted(p.name for p in BRANDS.iterdir() if p.is_dir() and p.name not in RESERVED)
 
 def current(strict: bool = True) -> str | None:
@@ -50,7 +54,8 @@ def new(brand: str) -> None:
     dest = BRANDS / brand
     if dest.exists():
         sys.exit(f"brands/{brand} already exists")
-    shutil.copytree(BRANDS / "_template", dest)
+    src = BRANDS / "_template" if (BRANDS / "_template").is_dir() else TEMPLATE
+    shutil.copytree(src, dest)
     (dest / "projects").mkdir(exist_ok=True); (dest / "fonts").mkdir(exist_ok=True)
     print(f"made brands/{brand}; now 'build my homebase' fills its brand-kit.md")
 

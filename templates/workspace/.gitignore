@@ -1,0 +1,9 @@
+_local/
+inbox/
+brands/*/projects/
+brands/*/fonts/
+brands/*/learned.json
+!brands/_agency/learned.json
+*.mp4
+*.mov
+*.MOV

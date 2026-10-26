@@ -1,0 +1,11 @@
+{
+  "name": "reel-editing",
+  "owner": { "name": "Mattheus Lotter" },
+  "plugins": [
+    {
+      "name": "reel-editing",
+      "source": "./",
+      "description": "A client's phone clip in, a finished 9:16 reel out, in that client's voice and look. One engine, one folder per brand, a local Studio page."
+    }
+  ]
+}
